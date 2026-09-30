@@ -11,10 +11,33 @@ html, body {
   width: 100%;
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Touch-friendly tap highlights for mobile */
+@media (pointer: coarse) {
+  button, a, [role="button"], label {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* Game iframe — touch & scrollbar suppression */
+iframe {
+  touch-action: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+iframe::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+/* Mobile landscape rotation matrix for portrait-held devices */
 @media (max-width: 767px) {
-  /* Landscape game on portrait-held phone rotates 90° cleanly without clipping */
   .rotate-landscape-mobile {
     position: fixed !important;
     top: 0 !important;
@@ -27,7 +50,6 @@ html, body {
     background: #000000 !important;
   }
 
-  /* Safe area top bar for portrait games */
   .mobile-safe-area-bar {
     position: absolute;
     top: 0;
@@ -37,8 +59,10 @@ html, body {
     align-items: center;
     justify-content: flex-start;
     box-sizing: border-box;
-    height: 30px;
-    padding: 0 10px;
+    height: calc(30px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: 10px;
+    padding-right: 10px;
     background: #000000;
     z-index: 9999;
   }
@@ -58,6 +82,11 @@ html, body {
     border: none;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+    touch-action: manipulation;
+  }
+  .mobile-exit-btn:active {
+    transform: scale(0.94);
+    background: #6d28d9;
   }
 }
 
@@ -67,13 +96,14 @@ html, body {
   top: 0 !important;
   left: 0 !important;
   bottom: 0 !important;
-  width: 30px !important;
+  width: calc(30px + env(safe-area-inset-left, 0px)) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-start !important;
   box-sizing: border-box !important;
   padding-top: 12px !important;
+  padding-left: env(safe-area-inset-left, 0px) !important;
   background: #000000 !important;
   z-index: 9999 !important;
 }
@@ -82,9 +112,9 @@ html, body {
   position: absolute !important;
   top: 0 !important;
   bottom: 0 !important;
-  left: 30px !important;
+  left: calc(30px + env(safe-area-inset-left, 0px)) !important;
   right: 0 !important;
-  width: calc(100% - 30px) !important;
+  width: calc(100% - 30px - env(safe-area-inset-left, 0px)) !important;
   height: 100% !important;
 }
 
@@ -102,6 +132,11 @@ html, body {
   border: none;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+  touch-action: manipulation;
+}
+.mobile-exit-btn-landscape:active {
+  transform: scale(0.92);
+  background: #6d28d9;
 }
 
 .mobile-exit-text-landscape {

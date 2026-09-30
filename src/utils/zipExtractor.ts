@@ -245,6 +245,25 @@ export async function extractAndPrepareZipGame(zipFile: Blob | File): Promise<Ex
         safeOverride(HTMLAudioElement.prototype, 'src');
         safeOverride(HTMLSourceElement.prototype, 'src');
 
+        // iOS AudioContext unlock on first touch
+        (function() {
+          function unlockAudio() {
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              var ctx = new AudioContext();
+              if (ctx.state === 'suspended') {
+                ctx.resume();
+              }
+            }
+            window.removeEventListener('touchstart', unlockAudio, true);
+            window.removeEventListener('touchend', unlockAudio, true);
+            window.removeEventListener('click', unlockAudio, true);
+          }
+          window.addEventListener('touchstart', unlockAudio, true);
+          window.addEventListener('touchend', unlockAudio, true);
+          window.addEventListener('click', unlockAudio, true);
+        })();
+
         window.addEventListener('wheel', function(e) {
           window.parent.postMessage({ type: 'iframe-scroll', deltaY: e.deltaY }, '*');
         }, { passive: true });
@@ -267,6 +286,8 @@ export async function extractAndPrepareZipGame(zipFile: Blob | File): Promise<Ex
         background: #000 !important;
         width: 100% !important;
         height: 100% !important;
+        position: fixed !important;
+        touch-action: none !important;
       }
       canvas {
         width: 100% !important;
@@ -274,6 +295,7 @@ export async function extractAndPrepareZipGame(zipFile: Blob | File): Promise<Ex
         object-fit: fill !important;
         display: block !important;
         margin: auto !important;
+        touch-action: none !important;
       }
       #canvas, #gameContainer, #game-container, #c2canvasdiv, #unity-container {
         width: 100% !important;

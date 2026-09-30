@@ -70,6 +70,27 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
     return () => timers.forEach(clearTimeout);
   }, [isFullscreen, isTopBarHidden, isPortrait, aspectRatio, gameSrc]);
 
+  // Lock body scroll during mobile fullscreen to eliminate iOS rubber-band bounce
+  useEffect(() => {
+    if (isMobileDevice && isFullscreen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
+    };
+  }, [isMobileDevice, isFullscreen]);
+
   // Fullscreen change & Orientation lock
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -106,11 +127,14 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
 
   const handleFullscreen = async () => {
     const el = containerRef.current as any;
-    if (!el) return;
-    try {
-      if (el.requestFullscreen) await el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
-    } catch (e) {}
+    if (el) {
+      try {
+        if (el.requestFullscreen) await el.requestFullscreen().catch(() => {});
+        else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+      } catch (err) {
+        console.warn("Fullscreen API not available, using CSS fixed overlay:", err);
+      }
+    }
     setIsFullscreen(true);
   };
 
@@ -169,6 +193,11 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
   return (
     <div
       ref={containerRef}
+      style={
+        isFullscreen && isMobileDevice
+          ? { height: "100dvh", width: "100dvw", top: 0, left: 0 }
+          : {}
+      }
       className={`w-full relative flex flex-col items-center justify-center bg-[#0a0a10] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden transition-all duration-300 ${
         isFullscreen
           ? "fixed inset-0 z-50 rounded-none border-none bg-black"
