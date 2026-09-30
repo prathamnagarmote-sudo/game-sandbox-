@@ -1,4 +1,4 @@
-# Standalone HTML5 Game Sandbox & QA Runner
+# Multiplayer iFrame Sandbox & QA Runner
 
 A self-contained, high-performance HTML5 Game Sandbox and QA runner built with React, Vite, TypeScript, and Tailwind CSS. Extracted directly from production game-hosting specifications to verify responsive portrait and landscape execution on all devices with zero server-side dependencies.
 
