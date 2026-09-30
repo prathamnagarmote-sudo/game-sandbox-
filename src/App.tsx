@@ -101,7 +101,7 @@ export default function App() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#07070b] text-white flex flex-col items-center justify-start p-3 sm:p-5 select-none overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#07070b] text-white flex flex-col items-center justify-start p-3 sm:p-5 select-none overflow-x-hidden pb-16 sm:pb-6">
       {/* Top Header */}
       <header className="w-full max-w-[1440px] flex items-center justify-between pb-3 mb-2 border-b border-white/5">
         <div className="flex items-center gap-2">

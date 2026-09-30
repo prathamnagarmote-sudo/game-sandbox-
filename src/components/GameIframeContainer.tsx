@@ -202,7 +202,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
         isFullscreen
           ? "fixed inset-0 z-50 rounded-none border-none bg-black"
           : isMobileDevice
-            ? "h-[70vh] min-h-[440px]"
+            ? "h-[54vh] min-h-[320px] max-h-[480px]"
             : "h-[calc(100vh-175px)] min-h-[500px] max-h-[820px]"
       }`}
     >
