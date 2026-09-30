@@ -410,15 +410,11 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
                 triggerLayoutResize();
                 iframeRef.current?.focus();
               }}
-              className={`border-none ${
-                isFullscreen
-                  ? !isMobileDevice
-                    ? isTopBarHidden
-                      ? "absolute inset-0 w-full h-full z-0"
-                      : "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
-                    : isPortrait
-                      ? "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
-                      : "landscape-game-iframe"
+              className={`border-none block ${
+                isFullscreen && isMobileDevice
+                  ? isPortrait
+                    ? "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
+                    : "landscape-game-iframe"
                   : "w-full h-full"
               }`}
               allow="autoplay; keyboard; gamepad; pointer-lock; accelerometer; gyroscope; microphone; camera; display-capture; web-share"
