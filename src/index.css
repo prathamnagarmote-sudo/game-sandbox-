@@ -12,7 +12,7 @@ html, body {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -38,8 +38,13 @@ iframe::-webkit-scrollbar {
   height: 0px !important;
 }
 
-/* Mobile landscape rotation matrix for portrait-held devices */
+/* ─── EXACT MULTIGAMING MOBILE STYLES ──────────────────────────────── */
+
 @media (max-width: 767px) {
+  /*
+   * Landscape game on portrait-held mobile:
+   * Uses position:fixed + transform-origin:top left + rotate(90deg)
+   */
   .rotate-landscape-mobile {
     position: fixed !important;
     top: 0 !important;
@@ -52,6 +57,11 @@ iframe::-webkit-scrollbar {
     background: #000000 !important;
   }
 
+  /*
+   * MultiGaming / CrazyGames-style compact safe area bar for PORTRAIT fullscreen:
+   * The bar height is strictly 30px high.
+   * The Exit button is vertically centered (24px high), leaving exactly 3px margin above/below.
+   */
   .mobile-safe-area-bar {
     position: absolute;
     top: 0;
@@ -61,14 +71,13 @@ iframe::-webkit-scrollbar {
     align-items: center;
     justify-content: flex-start;
     box-sizing: border-box;
-    height: calc(30px + env(safe-area-inset-top, 0px));
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-left: 10px;
-    padding-right: 10px;
+    height: 30px;
+    padding: 0 10px;
     background: #000000;
     z-index: 9999;
   }
 
+  /* Exit button — compact 24px height with purple gradient */
   .mobile-exit-btn {
     display: inline-flex;
     align-items: center;
@@ -79,10 +88,14 @@ iframe::-webkit-scrollbar {
     border-radius: 5px;
     background: #7c3aed;
     color: white;
+    font-family: system-ui, -apple-system, sans-serif;
     font-weight: 700;
     font-size: 11px;
     border: none;
     cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
     touch-action: manipulation;
   }
@@ -90,36 +103,48 @@ iframe::-webkit-scrollbar {
     transform: scale(0.94);
     background: #6d28d9;
   }
+
+  .mobile-exit-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
 }
 
-/* Landscape safe-area bar */
+/*
+ * ===== EXACT MULTIGAMING LANDSCAPE GAME STYLES =====
+ * Outside @media max-width:767px because physical landscape width exceeds 767px
+ */
+
+/* Narrow 30px vertical strip on the left */
 .mobile-safe-area-bar-landscape {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   bottom: 0 !important;
-  width: calc(30px + env(safe-area-inset-left, 0px)) !important;
+  width: 30px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-start !important;
   box-sizing: border-box !important;
   padding-top: 12px !important;
-  padding-left: env(safe-area-inset-left, 0px) !important;
   background: #000000 !important;
   z-index: 9999 !important;
 }
 
+/* Landscape iframe: placed directly beside the 30px vertical bar */
 .landscape-game-iframe {
   position: absolute !important;
   top: 0 !important;
   bottom: 0 !important;
-  left: calc(30px + env(safe-area-inset-left, 0px)) !important;
+  left: 30px !important;
   right: 0 !important;
-  width: calc(100% - 30px - env(safe-area-inset-left, 0px)) !important;
+  width: calc(100% - 30px) !important;
   height: 100% !important;
 }
 
+/* Exit button — vertical layout for landscape games */
 .mobile-exit-btn-landscape {
   display: inline-flex;
   flex-direction: column;
@@ -133,6 +158,9 @@ iframe::-webkit-scrollbar {
   color: white;
   border: none;
   cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
   touch-action: manipulation;
 }
@@ -141,13 +169,22 @@ iframe::-webkit-scrollbar {
   background: #6d28d9;
 }
 
+/* Vertical text inside the 30px bar */
 .mobile-exit-text-landscape {
   display: inline-block;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   transform: rotate(180deg);
+  font-family: system-ui, -apple-system, sans-serif;
   font-weight: 800;
   font-size: 8.5px;
+  letter-spacing: 0.02em;
   line-height: 1;
   white-space: nowrap;
+}
+
+.mobile-exit-icon-landscape {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
 }

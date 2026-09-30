@@ -380,22 +380,22 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
                   : "w-full h-full flex-1 flex flex-col bg-black"
             }`}
           >
-            {/* Mobile Safe Area Bar for Portrait Games */}
+            {/* EXACT MULTIGAMING Mobile Safe Area Bar for Portrait Games (30px high) */}
             {isFullscreen && isMobileDevice && isPortrait && (
-              <div className="mobile-safe-area-bar">
+              <div className="absolute top-0 left-0 right-0 h-[30px] bg-black z-50 select-none mobile-safe-area-bar">
                 <button onClick={toggleFullscreen} className="mobile-exit-btn">
-                  <LogOut className="w-3 h-3 -scale-x-100" />
+                  <LogOut className="mobile-exit-icon -scale-x-100" />
                   <span>Exit</span>
                 </button>
               </div>
             )}
 
-            {/* Mobile Safe Area Bar for Landscape Games */}
+            {/* EXACT MULTIGAMING Mobile Safe Area Bar for Landscape Games (30px wide) */}
             {isFullscreen && isMobileDevice && !isPortrait && (
-              <div className="mobile-safe-area-bar-landscape">
+              <div className="mobile-safe-area-bar-landscape select-none">
                 <button onClick={toggleFullscreen} className="mobile-exit-btn-landscape">
                   <span className="mobile-exit-text-landscape">Exit</span>
-                  <LogOut className="w-2.5 h-2.5 -scale-x-100" />
+                  <LogOut className="mobile-exit-icon-landscape -scale-x-100" />
                 </button>
               </div>
             )}
@@ -410,7 +410,17 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
                 triggerLayoutResize();
                 iframeRef.current?.focus();
               }}
-              className="w-full h-full border-none"
+              className={`border-none ${
+                isFullscreen
+                  ? !isMobileDevice
+                    ? isTopBarHidden
+                      ? "absolute inset-0 w-full h-full z-0"
+                      : "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
+                    : isPortrait
+                      ? "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
+                      : "landscape-game-iframe"
+                  : "w-full h-full"
+              }`}
               allow="autoplay; keyboard; gamepad; pointer-lock; accelerometer; gyroscope; microphone; camera; display-capture; web-share"
             />
           </div>
