@@ -178,7 +178,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isFullscreen, isTopBarHidden]);
 
-  // Aspect ratio calculation matching MultiGaming
+  // Aspect ratio calculation
   let aspectClass = "aspect-video";
   if (isPortrait) {
     if (aspectRatio === "3:4") aspectClass = "aspect-[3/4]";
@@ -241,7 +241,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
             : "h-[calc(100vh-175px)] min-h-[500px] max-h-[820px] items-center justify-center"
       }`}
     >
-      {/* ── 1. PC FULLSCREEN SAFE AREA TOP BAR (EXACT MULTIGAMING STYLE) ── */}
+      {/* ── 1. PC FULLSCREEN SAFE AREA TOP BAR ── */}
       {isFullscreen && !isMobileDevice && (
         <div
           className={`absolute top-0 left-0 right-0 h-[30px] bg-black z-50 select-none flex items-center justify-between px-4 border-b border-white/10 transition-transform duration-300 ease-in-out ${
@@ -395,7 +395,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
           </div>
         ) : (
           <div className={getViewportClasses()}>
-            {/* EXACT MULTIGAMING Mobile Safe Area Bar for Portrait Games (30px high) */}
+            {/* Compact Mobile Safe Area Bar for Portrait Games (30px high) */}
             {isFullscreen && isMobileDevice && isPortrait && (
               <div className="absolute top-0 left-0 right-0 h-[30px] bg-black z-50 select-none mobile-safe-area-bar">
                 <button onClick={toggleFullscreen} className="mobile-exit-btn">
@@ -405,7 +405,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
               </div>
             )}
 
-            {/* EXACT MULTIGAMING Mobile Safe Area Bar for Landscape Games (30px wide) */}
+            {/* Compact Mobile Safe Area Bar for Landscape Games (30px wide) */}
             {isFullscreen && isMobileDevice && !isPortrait && (
               <div className="mobile-safe-area-bar-landscape select-none">
                 <button onClick={toggleFullscreen} className="mobile-exit-btn-landscape">

@@ -129,7 +129,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* 1. EXACT MULTIGAMING CONTAINER VIEW */}
+      {/* 1. GAME CONTAINER VIEW */}
       <section className="w-full max-w-[1440px] flex flex-col items-center">
         <GameIframeContainer
           gameSrc={gameSrc}

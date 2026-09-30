@@ -13,7 +13,7 @@ A self-contained, high-performance HTML5 Game Sandbox and QA runner built with R
   3. **Launch Game**: Mounts the game directly into the sandbox runtime.
 - **Dimension Lock**: Once launched, dimensions are strictly locked during gameplay to preserve game canvas integrity.
 - **Custom Background Thumbnail**: Upload crisp, unblurred game key art / background images displayed behind the container and vertical game viewports.
-- **MultiGaming Safe Space Bars**:
+- **Responsive Safe Space Bars**:
   - **PC Fullscreen Top Bar**: 30px compact bar with game title, Fullscreen Mode badge, dimension lock status, Hide Space toggle, and exit button.
   - **Hide Space**: Toggles edge-to-edge view with top-center restore tab and ESC keyboard shortcut support.
   - **Mobile Safe Area Bars**: Notch safe area header for portrait and rotated vertical sidebar for landscape.

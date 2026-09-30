@@ -38,7 +38,7 @@ iframe::-webkit-scrollbar {
   height: 0px !important;
 }
 
-/* ─── EXACT MULTIGAMING MOBILE STYLES ──────────────────────────────── */
+/* ─── MOBILE SAFE AREA STYLES ──────────────────────────────── */
 
 @media (max-width: 767px) {
   /*
@@ -58,7 +58,7 @@ iframe::-webkit-scrollbar {
   }
 
   /*
-   * MultiGaming / CrazyGames-style compact safe area bar for PORTRAIT fullscreen:
+   * Ultra-compact safe area bar for PORTRAIT fullscreen:
    * The bar height is strictly 30px high.
    * The Exit button is vertically centered (24px high), leaving exactly 3px margin above/below.
    */
@@ -112,7 +112,7 @@ iframe::-webkit-scrollbar {
 }
 
 /*
- * ===== EXACT MULTIGAMING LANDSCAPE GAME STYLES =====
+ * ===== MOBILE LANDSCAPE GAME STYLES =====
  * Outside @media max-width:767px because physical landscape width exceeds 767px
  */
 
