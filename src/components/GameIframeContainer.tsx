@@ -190,6 +190,41 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
     else aspectClass = "aspect-video";
   }
 
+  // Calculate viewport container classes to prevent layout conflicts and guarantee zero gap with safe bar
+  const getViewportClasses = () => {
+    if (!isFullscreen) {
+      if (isPortrait) {
+        return `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl overflow-hidden z-10 transition-all duration-300`;
+      }
+      return "w-full h-full flex-1 flex flex-col bg-black overflow-hidden z-10 transition-all duration-300";
+    }
+
+    // Fullscreen mode on mobile
+    if (isMobileDevice) {
+      if (isPortrait) {
+        return "absolute inset-0 w-full h-full bg-black overflow-hidden z-10";
+      }
+      if (isDevicePortrait) {
+        return "rotate-landscape-mobile bg-black overflow-hidden z-10";
+      }
+      return "absolute inset-0 w-full h-full bg-black flex flex-col overflow-hidden z-10";
+    }
+
+    // Desktop PC Fullscreen mode
+    if (isPortrait) {
+      if (isTopBarHidden) {
+        return `absolute inset-0 w-auto h-full ${aspectClass} mx-auto bg-black flex flex-col shadow-2xl overflow-hidden z-10 transition-all duration-300`;
+      }
+      return `absolute top-[30px] bottom-0 left-0 right-0 w-auto h-[calc(100%-30px)] ${aspectClass} mx-auto bg-black flex flex-col shadow-2xl overflow-hidden z-10 transition-all duration-300`;
+    }
+
+    // Desktop PC Fullscreen Landscape: Flush against the 30px safe space boundary (or true edge-to-edge when hidden)
+    if (isTopBarHidden) {
+      return "absolute inset-0 w-full h-full m-0 p-0 bg-black flex flex-col overflow-hidden z-10 transition-all duration-300";
+    }
+    return "absolute top-[30px] bottom-0 left-0 right-0 w-full h-[calc(100%-30px)] m-0 p-0 bg-black flex flex-col overflow-hidden z-10 transition-all duration-300";
+  };
+
   return (
     <div
       ref={containerRef}
@@ -198,18 +233,18 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
           ? { height: "100dvh", width: "100dvw", top: 0, left: 0 }
           : {}
       }
-      className={`w-full relative flex flex-col items-center justify-center bg-[#0a0a10] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden transition-all duration-300 ${
+      className={`w-full relative flex flex-col bg-[#0a0a10] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden transition-all duration-300 ${
         isFullscreen
           ? "fixed inset-0 z-50 rounded-none border-none bg-black"
           : isMobileDevice
-            ? "h-[54vh] min-h-[320px] max-h-[480px]"
-            : "h-[calc(100vh-175px)] min-h-[500px] max-h-[820px]"
+            ? "h-[54vh] min-h-[320px] max-h-[480px] items-center justify-center"
+            : "h-[calc(100vh-175px)] min-h-[500px] max-h-[820px] items-center justify-center"
       }`}
     >
       {/* ── 1. PC FULLSCREEN SAFE AREA TOP BAR (EXACT MULTIGAMING STYLE) ── */}
       {isFullscreen && !isMobileDevice && (
         <div
-          className={`absolute top-0 left-0 right-0 h-[30px] bg-black/95 z-50 select-none flex items-center justify-between px-4 border-b border-white/10 transition-transform duration-300 ease-in-out ${
+          className={`absolute top-0 left-0 right-0 h-[30px] bg-black z-50 select-none flex items-center justify-between px-4 border-b border-white/10 transition-transform duration-300 ease-in-out ${
             isTopBarHidden ? "-translate-y-full pointer-events-none" : "translate-y-0"
           }`}
         >
@@ -288,8 +323,8 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
         </div>
       )}
 
-      {/* ── CRISP, UNBLURRED BACKGROUND THUMBNAIL IMAGE ── */}
-      {thumbnailUrl ? (
+      {/* ── CRISP, UNBLURRED BACKGROUND THUMBNAIL IMAGE (Hidden in PC Fullscreen for Landscape Games) ── */}
+      {thumbnailUrl && !(isFullscreen && !isPortrait) ? (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
           <img
             src={thumbnailUrl}
@@ -298,7 +333,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
           />
         </div>
       ) : (
-        gameSrc && (isFullscreen || isPortrait) && (
+        gameSrc && (isFullscreen || isPortrait) && !(isFullscreen && !isPortrait) && (
           <div className="absolute inset-0 bg-[#12121e] opacity-40 scale-105 pointer-events-none z-0">
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
           </div>
@@ -359,27 +394,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
             </button>
           </div>
         ) : (
-          <div
-            className={`overflow-hidden relative flex items-center justify-center z-10 transition-all duration-300 ${
-              isFullscreen
-                ? isMobileDevice
-                  ? isPortrait
-                    ? "absolute inset-0 w-full h-full bg-black"
-                    : isDevicePortrait
-                      ? "rotate-landscape-mobile bg-black"
-                      : "absolute inset-0 w-full h-full bg-black flex flex-col"
-                  : isPortrait
-                    ? isTopBarHidden
-                      ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                      : `relative h-[calc(100%-30px)] mt-[30px] w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                    : isTopBarHidden
-                      ? "absolute inset-0 w-full h-full flex-shrink-0 bg-black flex flex-col"
-                      : "absolute top-[30px] bottom-0 left-0 right-0 w-full h-[calc(100%-30px)] flex-shrink-0 bg-black flex flex-col"
-                : isPortrait
-                  ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                  : "w-full h-full flex-1 flex flex-col bg-black"
-            }`}
-          >
+          <div className={getViewportClasses()}>
             {/* EXACT MULTIGAMING Mobile Safe Area Bar for Portrait Games (30px high) */}
             {isFullscreen && isMobileDevice && isPortrait && (
               <div className="absolute top-0 left-0 right-0 h-[30px] bg-black z-50 select-none mobile-safe-area-bar">
@@ -415,7 +430,7 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
                   ? isPortrait
                     ? "absolute top-[30px] left-0 w-full h-[calc(100%-30px)] z-0"
                     : "landscape-game-iframe"
-                  : "w-full h-full"
+                  : "w-full h-full flex-1 m-0 p-0"
               }`}
               allow="autoplay; keyboard; gamepad; pointer-lock; accelerometer; gyroscope; microphone; camera; display-capture; web-share"
             />

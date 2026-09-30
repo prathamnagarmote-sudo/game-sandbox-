@@ -297,11 +297,15 @@ export async function extractAndPrepareZipGame(zipFile: Blob | File): Promise<Ex
         margin: auto !important;
         touch-action: none !important;
       }
-      #canvas, #gameContainer, #game-container, #c2canvasdiv, #unity-container {
+      #canvas, #gameContainer, #game-container, #c2canvasdiv, #unity-container, #unity-canvas {
         width: 100% !important;
         height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
       }
     </style>
     <script id="universal-scaler">
