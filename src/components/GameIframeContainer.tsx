@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Maximize2, LogOut, EyeOff, ChevronDown, UploadCloud, RefreshCw, Play, Lock } from "lucide-react";
+import { Maximize2, LogOut, EyeOff, ChevronDown, UploadCloud, RefreshCw, Play, Lock, Gamepad2 } from "lucide-react";
 
 interface GameIframeContainerProps {
   gameSrc: string | null;
@@ -305,8 +305,8 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
         )
       )}
 
-      {/* Standard Non-Fullscreen Top Right Fullscreen Trigger */}
-      {gameSrc && !isFullscreen && (
+      {/* Standard Non-Fullscreen Top Right Fullscreen Trigger (Desktop only) */}
+      {gameSrc && !isFullscreen && !isMobileDevice && (
         <div className="absolute top-3 right-3 z-30 flex items-center gap-2">
           <button
             onClick={toggleFullscreen}
@@ -321,61 +321,100 @@ export const GameIframeContainer: React.FC<GameIframeContainerProps> = ({
 
       {/* ── 4. MAIN VIEWPORT & IFRAME ── */}
       {gameSrc ? (
-        <div
-          className={`overflow-hidden relative flex items-center justify-center z-10 transition-all duration-300 ${
-            isFullscreen
-              ? isMobileDevice
-                ? isPortrait
-                  ? "absolute inset-0 w-full h-full bg-black"
-                  : isDevicePortrait
-                    ? "rotate-landscape-mobile bg-black"
-                    : "absolute inset-0 w-full h-full bg-black flex flex-col"
+        isMobileDevice && !isFullscreen ? (
+          /* Mobile Pre-Fullscreen Gate: Show game name and Play Now button */
+          <div className="flex flex-col items-center justify-center p-6 text-center select-none z-10 w-full max-w-sm mx-auto bg-black/40 backdrop-blur-xs rounded-2xl border border-white/5">
+            {thumbnailUrl ? (
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-white/20 shadow-2xl mb-3 relative group">
+                <img src={thumbnailUrl} alt={gameTitle} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                  <Play className="w-8 h-8 fill-white text-white drop-shadow-md" />
+                </div>
+              </div>
+            ) : (
+              <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-3 text-cyan-400 shadow-xl">
+                <Gamepad2 className="w-8 h-8 text-cyan-400" />
+              </div>
+            )}
+
+            <div className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 mb-1 px-2.5 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-500/30">
+              {isPortrait ? "Portrait Game" : "Landscape Game"} · {aspectRatio}
+            </div>
+
+            <h2 className="text-xl font-black uppercase tracking-wider text-white mb-1.5 truncate max-w-full px-2">
+              {gameTitle}
+            </h2>
+
+            <p className="text-[11px] text-white/50 font-mono mb-4">
+              Tap below to play in full screen mode
+            </p>
+
+            <button
+              type="button"
+              onClick={handleFullscreen}
+              className="w-full max-w-[200px] flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 active:scale-95 text-white font-black text-xs tracking-wider uppercase shadow-[0_4px_20px_rgba(16,185,129,0.4)] transition-all cursor-pointer"
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>Play Now</span>
+            </button>
+          </div>
+        ) : (
+          <div
+            className={`overflow-hidden relative flex items-center justify-center z-10 transition-all duration-300 ${
+              isFullscreen
+                ? isMobileDevice
+                  ? isPortrait
+                    ? "absolute inset-0 w-full h-full bg-black"
+                    : isDevicePortrait
+                      ? "rotate-landscape-mobile bg-black"
+                      : "absolute inset-0 w-full h-full bg-black flex flex-col"
+                  : isPortrait
+                    ? isTopBarHidden
+                      ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
+                      : `relative h-[calc(100%-30px)] mt-[30px] w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
+                    : isTopBarHidden
+                      ? "absolute inset-0 w-full h-full flex-shrink-0 bg-black flex flex-col"
+                      : "absolute top-[30px] bottom-0 left-0 right-0 w-full h-[calc(100%-30px)] flex-shrink-0 bg-black flex flex-col"
                 : isPortrait
-                  ? isTopBarHidden
-                    ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                    : `relative h-[calc(100%-30px)] mt-[30px] w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                  : isTopBarHidden
-                    ? "absolute inset-0 w-full h-full flex-shrink-0 bg-black flex flex-col"
-                    : "absolute top-[30px] bottom-0 left-0 right-0 w-full h-[calc(100%-30px)] flex-shrink-0 bg-black flex flex-col"
-              : isPortrait
-                ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
-                : "w-full h-full flex-1 flex flex-col bg-black"
-          }`}
-        >
-          {/* Mobile Safe Area Bar for Portrait Games */}
-          {isFullscreen && isMobileDevice && isPortrait && (
-            <div className="mobile-safe-area-bar">
-              <button onClick={toggleFullscreen} className="mobile-exit-btn">
-                <LogOut className="w-3 h-3 -scale-x-100" />
-                <span>Exit</span>
-              </button>
-            </div>
-          )}
+                  ? `relative h-full w-auto ${aspectClass} mx-auto flex-shrink-0 bg-black flex flex-col shadow-2xl`
+                  : "w-full h-full flex-1 flex flex-col bg-black"
+            }`}
+          >
+            {/* Mobile Safe Area Bar for Portrait Games */}
+            {isFullscreen && isMobileDevice && isPortrait && (
+              <div className="mobile-safe-area-bar">
+                <button onClick={toggleFullscreen} className="mobile-exit-btn">
+                  <LogOut className="w-3 h-3 -scale-x-100" />
+                  <span>Exit</span>
+                </button>
+              </div>
+            )}
 
-          {/* Mobile Safe Area Bar for Landscape Games */}
-          {isFullscreen && isMobileDevice && !isPortrait && (
-            <div className="mobile-safe-area-bar-landscape">
-              <button onClick={toggleFullscreen} className="mobile-exit-btn-landscape">
-                <span className="mobile-exit-text-landscape">Exit</span>
-                <LogOut className="w-2.5 h-2.5 -scale-x-100" />
-              </button>
-            </div>
-          )}
+            {/* Mobile Safe Area Bar for Landscape Games */}
+            {isFullscreen && isMobileDevice && !isPortrait && (
+              <div className="mobile-safe-area-bar-landscape">
+                <button onClick={toggleFullscreen} className="mobile-exit-btn-landscape">
+                  <span className="mobile-exit-text-landscape">Exit</span>
+                  <LogOut className="w-2.5 h-2.5 -scale-x-100" />
+                </button>
+              </div>
+            )}
 
-          <iframe
-            ref={iframeRef}
-            src={gameSrc}
-            title={gameTitle}
-            width="100%"
-            height="100%"
-            onLoad={() => {
-              triggerLayoutResize();
-              iframeRef.current?.focus();
-            }}
-            className="w-full h-full border-none"
-            allow="autoplay; keyboard; gamepad; pointer-lock; accelerometer; gyroscope; microphone; camera; display-capture; web-share"
-          />
-        </div>
+            <iframe
+              ref={iframeRef}
+              src={gameSrc}
+              title={gameTitle}
+              width="100%"
+              height="100%"
+              onLoad={() => {
+                triggerLayoutResize();
+                iframeRef.current?.focus();
+              }}
+              className="w-full h-full border-none"
+              allow="autoplay; keyboard; gamepad; pointer-lock; accelerometer; gyroscope; microphone; camera; display-capture; web-share"
+            />
+          </div>
+        )
       ) : isStaged ? (
         /* Staged State: Game ZIP is loaded, waiting for user to select orientation & Launch */
         <div className="flex flex-col items-center justify-center p-8 text-center select-none z-10 bg-black/40 backdrop-blur-xs rounded-2xl border border-white/5">
